@@ -1,0 +1,16 @@
+node_modules/
+dist/
+coverage/
+*.tsbuildinfo
+packages/*/dist/
+examples/node_modules/
+examples/web/dist/
+examples/var/
+examples/fake.log
+examples/out.txt
+.vitest-cache/
+# Copied in by tools/prepare-package.mjs before npm pack
+packages/ecr-js/docs/
+packages/ecr-js/CHANGELOG.md
+packages/ecr-js/SECURITY.md
+packages/ecr-react/CHANGELOG.md

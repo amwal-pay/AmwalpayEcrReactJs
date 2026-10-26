@@ -1,0 +1,28 @@
+{
+  "name": "@amwalpay/ecr-react",
+  "version": "1.0.0-rc.1",
+  "description": "React hooks and components for an Amwal ECR till: POS-style amount entry, terminals, signing-key settings, and a transaction that runs on your server and is watched from the page.",
+  "license": "UNLICENSED",
+  "author": "Amwal Pay (https://www.amwal-pay.com)",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": ["dist", "README.md"],
+  "sideEffects": false,
+  "peerDependencies": {
+    "react": ">=18"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "vitest run",
+    "prepack": "node ../../tools/prepare-package.mjs ecr-react"
+  }
+}

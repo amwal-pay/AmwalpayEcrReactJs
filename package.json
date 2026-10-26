@@ -1,0 +1,35 @@
+{
+  "name": "amwalpay-ecr-js-monorepo",
+  "private": true,
+  "description": "Amwal Pay ECR SDK for JavaScript: @amwalpay/ecr-js (Node.js) and @amwalpay/ecr-react (React), with the example web till.",
+  "license": "UNLICENSED",
+  "type": "module",
+  "workspaces": [
+    "packages/ecr-js",
+    "packages/ecr-react"
+  ],
+  "engines": {
+    "node": ">=18.18"
+  },
+  "scripts": {
+    "build": "npm run build -w @amwalpay/ecr-js && npm run build -w @amwalpay/ecr-react",
+    "test": "npm run test -w @amwalpay/ecr-js && npm run test -w @amwalpay/ecr-react",
+    "test:unit": "npm run test:unit -w @amwalpay/ecr-js",
+    "test:integration": "npm run test:integration -w @amwalpay/ecr-js",
+    "typecheck": "npm run typecheck -w @amwalpay/ecr-js && npm run typecheck -w @amwalpay/ecr-react",
+    "check:secrets": "node tools/check-secrets.mjs",
+    "pack:artifacts": "node tools/build-artifact.mjs",
+    "fake-pos": "node tools/fake-pos-server.mjs"
+  },
+  "devDependencies": {
+    "@testing-library/react": "^16.1.0",
+    "@types/node": "^22.10.2",
+    "@types/react": "^18.3.18",
+    "@types/react-dom": "^18.3.5",
+    "jsdom": "^25.0.1",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "typescript": "^5.7.2",
+    "vitest": "^2.1.8"
+  }
+}

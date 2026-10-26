@@ -1,0 +1,2 @@
+/* React renders into #root; the page stylesheet (app.css, unchanged) lays out body's children. */
+#root { display: contents; }

@@ -1,0 +1,93 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+    tags: ['v*']
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: Node ${{ matrix.node }} on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-2022, ubuntu-24.04]
+        node: ['18', '20', '22']
+    env:
+      TZ: Asia/Muscat
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+          cache: npm
+
+      - name: Install
+        run: npm ci --no-audit --no-fund
+
+      - name: Typecheck (sources and tests)
+        run: npm run typecheck
+
+      - name: No secrets or card numbers
+        run: node tools/check-secrets.mjs
+
+      - name: Unit tests
+        run: npm run test:unit
+
+      - name: Integration tests (real TCP, real HTTP, child processes)
+        run: npm run test:integration
+
+      - name: React package tests
+        run: npm run test -w @amwalpay/ecr-react
+
+      - name: Build the artifacts
+        run: node tools/build-artifact.mjs
+
+      - name: Example installs and runs on the artifacts
+        working-directory: examples
+        shell: bash
+        env:
+          AMWAL_ECR_WIFI_KEY: 0123456789ABCDEF0123456789ABCDEF
+        run: |
+          npm install --no-audit --no-fund
+          npm run verify-artifact
+          node ../tools/fake-pos-server.mjs --key "$AMWAL_ECR_WIFI_KEY" --port 19100 > fake.log 2>&1 &
+          sleep 2
+          node cli/wifi-quickstart.mjs 127.0.0.1 19100 1.234 | tee out.txt
+          grep -q "Approved 1.234" out.txt
+
+      - name: Example web till tests (real server, tasks, fake terminal)
+        working-directory: examples
+        run: |
+          npm run build:web
+          npm test
+
+      - name: Web till runs on the artifacts (sale through the server)
+        working-directory: examples
+        shell: bash
+        env:
+          AMWAL_ECR_EXAMPLE_DATA: ${{ runner.temp }}/ecr-example
+        run: |
+          node server/bin/serve.mjs > web.log 2>&1 &
+          sleep 2
+          B=http://127.0.0.1:5080
+          j() { curl -sf -H 'Content-Type: application/json' "$@"; }
+          field() { node -e "let s='';process.stdin.on('data',d=>s+=d).on('end',()=>console.log(JSON.parse(s)['$1']))"; }
+          j -X POST $B/api/terminals -d '{"name":"CI","serialNumber":"CI-1","ecrMode":2,"ipAddress":"127.0.0.1","port":"19100"}'
+          j -X PUT $B/api/settings/keys/wifi -d '{"value":"0123456789ABCDEF0123456789ABCDEF"}' > /dev/null
+          ID=$(j -X POST $B/api/transactions -d '{"terminalSerial":"CI-1","type":"Sale","amountDigits":"2500","merchantReference":"CI-ORDER-1"}' | field id)
+          for i in $(seq 1 40); do STATE=$(curl -sf $B/api/transactions/$ID | field state); [ "$STATE" = completed ] && break; sleep 0.5; done
+          echo "state: $STATE"; [ "$STATE" = completed ]
+
+      - name: Keep the artifacts
+        if: matrix.os == 'windows-2022' && matrix.node == '22'
+        uses: actions/upload-artifact@v4
+        with:
+          name: amwalpay-ecr-js
+          path: dist/

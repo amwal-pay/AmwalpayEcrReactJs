@@ -1,0 +1,32 @@
+{
+  "name": "@amwalpay/ecr-js",
+  "version": "1.0.0-rc.1",
+  "description": "Amwal Pay ECR SDK for Node.js: drive an Amwal POS terminal over Wi-Fi/LAN or the Amwal ECR Web Service (sale, void, refund, inquiry, e-receipt, close receipt) with the same safety rules as the Windows/.NET and PHP SDKs.",
+  "license": "UNLICENSED",
+  "author": "Amwal Pay (https://www.amwal-pay.com)",
+  "homepage": "https://github.com/amwal-pay/AmwalpayEcrJs",
+  "keywords": ["amwal", "amwalpay", "ecr", "pos", "payments", "terminal", "oman"],
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": ["dist", "docs", "README.md", "CHANGELOG.md", "SECURITY.md"],
+  "engines": {
+    "node": ">=18.18"
+  },
+  "sideEffects": false,
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "vitest run",
+    "test:unit": "vitest run tests/unit",
+    "test:integration": "vitest run tests/integration",
+    "prepack": "node ../../tools/prepare-package.mjs ecr-js"
+  }
+}

@@ -1,0 +1,34 @@
+{
+  "name": "amwalpay-ecr-js-example",
+  "private": true,
+  "description": "The Amwal ECR web sample (Wi-Fi and Web Service) in Node.js and React, built on the @amwalpay/ecr-js and @amwalpay/ecr-react package artifacts.",
+  "license": "UNLICENSED",
+  "type": "module",
+  "engines": {
+    "node": ">=18.18"
+  },
+  "scripts": {
+    "verify-artifact": "node bin/verify-artifact.mjs",
+    "build:web": "vite build web",
+    "dev:web": "vite web",
+    "serve": "node server/bin/serve.mjs",
+    "start": "npm run build:web && npm run serve",
+    "test": "vitest run",
+    "test:web": "vitest run --root web"
+  },
+  "dependencies": {
+    "@amwalpay/ecr-js": "file:../dist/amwalpay-ecr-js-1.0.0-rc.1.tgz",
+    "@amwalpay/ecr-react": "file:../dist/amwalpay-ecr-react-1.0.0-rc.1.tgz",
+    "qrcode": "^1.5.4",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "@types/react": "^18.3.18",
+    "@types/react-dom": "^18.3.5",
+    "@vitejs/plugin-react": "^4.3.4",
+    "typescript": "^5.7.2",
+    "vite": "^6.0.5",
+    "vitest": "^2.1.8"
+  }
+}
